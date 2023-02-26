@@ -2,9 +2,7 @@ import {
     Nav,
     NavLink,
     Bars,
-    NavMenu,
-    NavBtn,
-    NavBtnLink,
+    NavMenu
   } from './NavbarElements';
 
 
@@ -30,9 +28,6 @@ const NavBar = () => {
           </NavLink>
           
         </NavMenu>
-        <NavBtn>
-          <NavBtnLink to='/signin'>Sign In</NavBtnLink>
-        </NavBtn>
       </Nav>
     </>
         
