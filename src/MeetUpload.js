@@ -1,10 +1,10 @@
-const Meet = () => {
+const MeetUpload = () => {
     return (
         <div className="meet">
 
             <div className="content">
 
-                <h1>Meet</h1>
+                <h1>Meet upload</h1>
 
             </div>
 
@@ -12,4 +12,4 @@ const Meet = () => {
     );
 }
  
-export default Meet;
+export default MeetUpload;

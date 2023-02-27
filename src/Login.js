@@ -1,79 +1,80 @@
-import './styles/Login.css'
+import React , { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import React from 'react';
 
-const mode = 'login';
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-class LoginComponent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            mode: this.props.mode
-        }
-    }
-    toggleMode() {
-        var newMode = this.state.mode === 'login' ? 'signup' : 'login';
-        this.setState({ mode: newMode});
-    }
-    render() {
-        return (
-            <div>
-                <div className={`form-block-wrapper form-block-wrapper--is-${this.state.mode}`} ></div>
-                <section className={`form-block form-block--is-${this.state.mode}`}>
-                    <header className="form-block__header">
-                        <h1>{this.state.mode === 'login' ? 'Student Login' : 'Admin Login'}</h1>
-                        <div className="form-block__toggle-block">
-                            <span>{this.state.mode === 'login' ? 'Admin Login? ' : 'Student Login? '} Click here &#8594;</span>
-                            <input id="form-toggler" type="checkbox" onClick={this.toggleMode.bind(this)} />
-                            <label htmlFor="form-toggler"></label>
-                        </div>
-                    </header>
-                    <LoginForm mode={this.state.mode} onSubmit={this.props.onSubmit} />
-                </section>
-            </div>
-        )
-    }
-}
 
-class LoginForm extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        return (
-        <form onSubmit={this.props.onSubmit}>
-            <div className="form-block__input-wrapper">
-                <div className="form-group form-group--login">
-                    <Input type="text" id="username" label="user name" disabled={this.props.mode === 'signup'}/>
-                    <Input type="password" id="password" label="password" disabled={this.props.mode === 'signup'}/>
-                </div>
-                <div className="form-group form-group--signup">
-                    <Input type="text" id="fullname" label="full name" disabled={this.props.mode === 'login'} />
-                    <Input type="email" id="email" label="email" disabled={this.props.mode === 'login'} />
-                 </div>
-            </div>
-            <button className="button button--primary full-width" type="submit">{this.props.mode === 'login' ? 'Log In' : 'Sign Up'}</button>
-        </form>
-        )
-    }
-}
 
-const Input = ({ id, type, label, disabled }) => (
-    <input className="form-group__input" type={type} id={id} placeholder={label} disabled={disabled}/>
-);
+  const handleChangeUsername = event => {
+    setUsername(event.target.value);
+  };
 
-const Login = () => (
-    <div className={`app app--is-${mode}`}>
-        <LoginComponent
-            mode={mode}
-            onSubmit={
-                function() {
-                    console.log('submit');
-                }
+  const handleChangePassword = event => {
+    setPassword(event.target.value);
+  }
+
+  const handleSubmit = e  => {
+
+    e.preventDefault();
+
+    // alert('A form was submitted: ' + message);
+ 
+        fetch('http://localhost:8000/login', {
+            method: 'POST',
+            // redirect: 'manual',
+            body: JSON.stringify({uname : username , pwd : password}),
+            headers: {
+              'Content-Type': 'application/json'
             }
-        />
-    </div>
-);
+        })
+        .then((res) => res.json())
+        .then((data) => {
+         
+          console.log(data)
+          console.log(data.sending)
 
+      if(data.sending === "success"){
+        navigate('/admin')
+      }
+          
+
+        })
+
+  }
+
+  return (
+    <div>
+            <form onSubmit={handleSubmit}>
+
+
+                <div>
+                  <label>Username </label>
+                  <input type="number" name="uname" required id="uname" onChange={handleChangeUsername}/>
+                </div>
+
+                <div>
+                  <label>Password </label>
+                  <input type="password" name="pass" required id="pwd" onChange={handleChangePassword}/>
+
+                </div>
+
+                <div>
+                  <input type="submit" />
+                </div>
+
+                <h1>{username}</h1>
+
+              </form>
+
+         </div>
+      
+  );
+};
 
 export default Login;
+
+
