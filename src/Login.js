@@ -2,6 +2,7 @@ import React , { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -36,9 +37,11 @@ const Login = () => {
          
           console.log(data)
           console.log(data.sending)
+          console.log(data.unit)
+          console.log(data.priority)
 
-      if(data.sending === "success"){
-        navigate('/admin')
+      if(data.sending === "success" && data.unit !== 0 && data.priority === 2){
+        navigate('/student')
       }
           
 

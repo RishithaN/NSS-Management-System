@@ -8,7 +8,9 @@ import Admin from './Admin'
 import MeetUpload from './MeetUpload'
 import MeetView from './MeetView'
 import Units from './Units'
+import Student from './Student'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
@@ -18,21 +20,27 @@ function App() {
 
     <div className='App'>
 
-      <Router>
-      <NavBar />
-      <Routes>
-        <Route path='/login' element={< Login />} />
-        <Route path='/gallery' element={< Gallery />} />
-        <Route path='/contact' element={< Contact />} />
-        <Route path='/admin' element={< Admin />} />
-        <Route path='/meet-upload' element={< MeetUpload />} />
-        <Route path='/meet-view' element={< MeetView />} />
-        <Route path='/units' element={< Units />} />
-        <Route path='/' element={< Home />} />
 
-        
-      </Routes>
-    </Router>
+            <Router>
+            <NavBar />
+            <Routes>
+              <Route path='/login' element={< Login />} />
+              <Route path='/gallery' element={< Gallery />} />
+              <Route path='/contact' element={< Contact />} />
+              <Route path='/admin' element={< Admin />} />
+              <Route path='/meet-upload' element={< MeetUpload />} />
+              <Route path='/meet-view' element={< MeetView />} />
+              <Route path='/units' element={< Units />} />
+              <Route path='/student' element={<  Student />} />
+              <Route path='/' element={< Home />} />
+
+
+
+              
+            </Routes>
+          </Router>
+
+
 
     </div>
 
