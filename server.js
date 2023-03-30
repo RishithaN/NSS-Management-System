@@ -43,18 +43,27 @@ app.listen(8000, () => {
   })
 
 
-app.post("/meet-upload" , function(req , res)  {
+app.post("/admin/meet-upload" , function(req , res)  {
+
+  console.log("hello")
+
+  const unit_number = session.unit
+
+  console.log(session.unit)
 
   const type = req.body.mtype
   const title = req.body.mtitle
   const total = req.body.mtotal
   const description = req.body.mdescription
 
+
+
+
   console.log(type , title , total , description)
 
   var status = "fail"
 
-  client.query('INSERT INTO meet VALUES ($1 , $2 , $3 , $4 , $5)' , [id , type , title , total , description] , (err , result) => {
+  client.query('INSERT INTO meet(unit , mtype , mtitle , mtotal , mdescription) VALUES ($1 , $2 , $3 , $4 , $5)' , [unit_number , type , title , total , description] , (err , result) => {
 
     if(err){
       throw err;
@@ -75,7 +84,90 @@ app.post("/meet-upload" , function(req , res)  {
 
 })
 
+
+
+app.post("/admin/gallery-upload" , function(req , res)  {
+
+  console.log("hello")
+
+  const unit_number = session.unit
+
+  console.log(session.unit)
+
+  const image_loc = req.body.image_loc
+
+  console.log(image_loc)
+
+  var status = "fail"
+
+  client.query('INSERT INTO gallery_units(unit , image_loc) VALUES ($1 , $2)' , [unit_number , image_loc] , (err , result) => {
+
+    if(err){
+      throw err;
+    }
+    else{
+      if(result.rowCount === 1){
+        status = "success";
+        console.log("i am here");
+      }
+
+      console.log(status);
+      res.send({sending : status})
+
+    }
+
+  })
+
+
+})
+
+
+
+app.post("/overall-admin/view-meets" , function(req,res) {
+
+
+  const unit_number = parseInt(req.body.unit);
+
+
+  client.query('SELECT * from meet where unit = $1' , [unit_number], (err, result) => {
+      
+      if(err){
+          throw err;
+      }
+      else{
+
+        res.send({sending_rows : result})
+
   
+      }
+
+    })
+
+})
+
+  
+app.post("/overall-admin/view-gallery" , function(req,res) {
+
+
+  const unit_number = parseInt(req.body.unit);
+
+
+  client.query('SELECT * from gallery_units where unit = $1' , [unit_number], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      res.send({sending_images : result})
+
+
+    }
+
+  })
+
+
+})
 
 app.post("/login", function(req, res) {
 
@@ -106,7 +198,7 @@ app.post("/login", function(req, res) {
                   unit_number = row.unit
                   priority_number = row.priority
 
-                  session=req.session;
+                  session = req.session;
                   session.userid = req.body.uname;
                   session.unit = row.unit
                   session.priority = row.priority
