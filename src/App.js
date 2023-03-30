@@ -9,6 +9,7 @@ import MeetUpload from './MeetUpload'
 import MeetView from './MeetView'
 import Units from './Units'
 import Student from './Student'
+import OverallAdmin from './OverallAdmin';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
@@ -28,10 +29,10 @@ function App() {
               <Route path='/gallery' element={< Gallery />} />
               <Route path='/contact' element={< Contact />} />
               <Route path='/admin' element={< Admin />} />
-              <Route path='/meet-upload' element={< MeetUpload />} />
               <Route path='/meet-view' element={< MeetView />} />
               <Route path='/units' element={< Units />} />
               <Route path='/student' element={<  Student />} />
+              <Route path='/overall-admin' element={< OverallAdmin />} />
               <Route path='/' element={< Home />} />
 
 

@@ -41,9 +41,8 @@ const MeetUpload = () => {
 
         e.preventDefault();
     
-        // alert('A form was submitted: ' + message);
      
-            fetch('http://localhost:8000/meet-upload', {
+            fetch('http://localhost:8000/admin/meet-upload', {
                 method: 'POST',
                 // redirect: 'manual',
                 body: JSON.stringify({mtype : meet_type , mtitle : title , mtotal : total , mdescription : description}),
@@ -101,6 +100,13 @@ const MeetUpload = () => {
                 <div>
                   <label>Description </label>
                   <textarea type="text" name="description" required id="description" onChange={handleDescription}/>
+
+                </div>
+
+
+                <div>
+
+                    <input type="submit"/>
 
                 </div>
 

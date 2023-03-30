@@ -1,5 +1,6 @@
 import React , { useState } from "react";
 // import Imgix from "react-imgix";
+import './Admin.css';
 
 
 const Student = () => {
@@ -129,9 +130,17 @@ const Student = () => {
   
                 <h1>Welcome to Student page</h1>
 
-                <h2 onClick={handleMeetViewForStudent}>View meet details</h2>
+                <div className="studentNav2">
+
+                <h2 onClick={handleMeetViewForStudent} className="navStudent">View meet details</h2>
                 <br/>
-                <h2 onClick={handleGalleryViewForStudent}>View gallery</h2>
+                <h2 onClick={handleGalleryViewForStudent} className="navStudent">View gallery</h2>
+
+
+                <br/> <br/> 
+
+
+                </div>
 
 
 
