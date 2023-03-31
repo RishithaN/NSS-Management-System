@@ -1,6 +1,7 @@
 import React , { useState } from "react";
 import './OverallAdmin.css';
 import './Admin.css'
+import './Student.css'
 
 const OverallAdmin = () => {
 
@@ -176,19 +177,18 @@ const OverallAdmin = () => {
                         <br/>
                         <br/>
 
-                        <h1>Welcome to Student page</h1>
+                        <h1>Welcome to Overall Admin page</h1>
 
 
                         <br/>
                         <br/>
 
-                        <div className="studentNav2">
+                        <header>
 
-                <h2 onClick={handleMeetViewForStudent} className="navStudent">View meet details</h2>
-                <br/>
-                <h2 onClick={handleGalleryViewForStudent} className="navStudent">View gallery</h2>
+                <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:100}}>View meet details</h2>
+                <h2 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginRight:100}}>View gallery</h2>
 
-                </div>
+                </header>
 
 
 
@@ -197,15 +197,15 @@ const OverallAdmin = () => {
 
                             {
                                     meetArray.map((row) =>
-                                        <ul>
-                                                <li>{row.mtitle}</li>
-                                                <li>{row.mtype}</li>
-                                                <li>{row.mtotal}</li>
-                                                <li>{row.mdescription}</li>
+                                    <ul style={{listStyleType: "none"}}>
+                                            <li><b><u>Title: {row.mtitle}</u></b></li>
+                                            <li>Meet/Manual: {row.mtype}</li>
+                                            <li>Number of Atendees: {row.mtotal}</li>
+                                            <li>Description: {row.mdescription}</li>
 
-                                                <br/>
+                                            <br/>
 
-                                        </ul>
+                                    </ul>
 
                                         
                                     )
@@ -221,7 +221,7 @@ const OverallAdmin = () => {
                         <div className="gallery">
                                 {images.map(image => (
 
-                                <img
+                                <img style={{padding: 5, display: 'inline-block'}}
                                     sizes="(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw"
                                     src={process.env.PUBLIC_URL + image.image_loc}
                                     alt="Gallery Images" 

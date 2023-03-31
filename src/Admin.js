@@ -1,5 +1,6 @@
 
 import React , { useState } from "react";
+import "./Student.css"
 
 
 const Admin = () => {
@@ -260,19 +261,19 @@ const getAllMeetDetails = async () => {
 
       <div>
 
-        <div className="studentNav">
+        <header className="studentNav">
 
-          <h2 onClick={handleMeetUploadForStudent} className="navStudent">Upload meet details</h2>
+          <h2 onClick={handleMeetUploadForStudent} style={{textAlign:"left", marginLeft:20}}>Upload meet details</h2>
           <br/>
-          <h2 onClick={handleGalleryUploadForStudent} className="navStudent">Upload gallery</h2>
+          <h2 onClick={handleGalleryUploadForStudent} style={{textAlign:"left", marginLeft:90}}>Upload gallery</h2>
           <br/>
-          <h2 onClick={handleMeetViewForStudent} className="navStudent">View meets</h2>
+          <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:90}}>View meets</h2>
           <br/>
-          <h2 onClick={handleGalleryViewForStudent} className="navStudent">View Gallery</h2>
+          <h2 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginLeft:100}}>View Gallery</h2>
           <br/>
 
 
-          </div>
+          </header>
 
           {isMeet && (
                     <div>
@@ -364,15 +365,15 @@ const getAllMeetDetails = async () => {
 
                             {
                                     meetArray.map((row) =>
-                                        <ul>
-                                                <li>{row.mtitle}</li>
-                                                <li>{row.mtype}</li>
-                                                <li>{row.mtotal}</li>
-                                                <li>{row.mdescription}</li>
+                                    <ul style={{listStyleType: "none"}}>
+                                          <li><b><u>Title: {row.mtitle}</u></b></li>
+                                          <li>Meet/Manual: {row.mtype}</li>
+                                          <li>Number of Atendees: {row.mtotal}</li>
+                                          <li>Description: {row.mdescription}</li>
 
-                                                <br/>
+                                          <br/>
 
-                                        </ul>
+                                  </ul>
 
                                         
                                     )
@@ -390,7 +391,7 @@ const getAllMeetDetails = async () => {
                               <div className="gallery">
                               {images.map(image => (
 
-                              <img
+                              <img style={{padding: 5, display: 'inline-block'}}
                                   sizes="(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw"
                                   src={process.env.PUBLIC_URL + image.image_loc}
                                   alt="Gallery Images" 

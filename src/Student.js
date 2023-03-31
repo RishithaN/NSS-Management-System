@@ -1,6 +1,6 @@
 import React , { useState } from "react";
 // import Imgix from "react-imgix";
-import './Admin.css';
+import "./Student.css"
 
 
 const Student = () => {
@@ -128,32 +128,24 @@ const Student = () => {
 
        <div>
   
-                <h1>Welcome to Student page</h1>
-
-                <div className="studentNav2">
-
-                <h2 onClick={handleMeetViewForStudent} className="navStudent">View meet details</h2>
-                <br/>
-                <h2 onClick={handleGalleryViewForStudent} className="navStudent">View gallery</h2>
-
-
-                <br/> <br/> 
-
-
-                </div>
-
+                <h1 style={{marginTop:30}}>Welcome to Student page</h1><br/><br/>
+<header>
+                <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:250}}>View meet details</h2>
+                <h2 onClick={handleGalleryViewForStudent}style={{textAlign:"right", marginRight:250}}>View gallery</h2>
+</header>
 
 
                 {isMeet && (
-                    <div>
-
+                    <div><div class="split left">
+                    <div class="centered">
+<br/>
                             {
                                     meetArray.map((row) =>
-                                        <ul>
-                                                <li>{row.mtitle}</li>
-                                                <li>{row.mtype}</li>
-                                                <li>{row.mtotal}</li>
-                                                <li>{row.mdescription}</li>
+                                        <ul style={{listStyleType: "none"}}>
+                                                <li><b><u>Title: {row.mtitle}</u></b></li>
+                                                <li>Meet/Manual: {row.mtype}</li>
+                                                <li>Number of Atendees: {row.mtotal}</li>
+                                                <li>Description: {row.mdescription}</li>
 
                                                 <br/>
 
@@ -164,16 +156,17 @@ const Student = () => {
 
                             }
 
-
+</div></div>
                     </div>
                 )}
 
                 {isGallery && (
-                    
-                    <div className="gallery">
+                    <div class="split right">
+                    <div class="centered">
+                    <div className="gallery" style={{margin:50}}>
                             {images.map(image => (
 
-                            <img
+                            <img  style={{padding: 5, display: 'inline-block'}}
                                 sizes="(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw"
                                 src={process.env.PUBLIC_URL + image.image_loc}
                                 alt="Gallery Images" 
@@ -182,7 +175,7 @@ const Student = () => {
                             />
                             // <h1>{image.image_loc}</h1>
                             ))}
-                        </div>
+                        </div></div></div>
 
                 )}
 
