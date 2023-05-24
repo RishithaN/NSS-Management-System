@@ -1,7 +1,8 @@
 
 const express = require("express")
 const cors = require("cors")
-
+const fs = require("fs")
+var path = require("path");
 const cookieParser = require("cookie-parser");
 const sessions = require('express-session');
 
@@ -40,7 +41,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.listen(8000, () => {
     console.log("app listening on port 8000")
-  })
+})
 
 
 app.post("/admin/meet-upload" , function(req , res)  {
@@ -88,19 +89,23 @@ app.post("/admin/meet-upload" , function(req , res)  {
 
 app.post("/admin/gallery-upload" , function(req , res)  {
 
-  console.log("hello")
-
   const unit_number = session.unit
 
   console.log(session.unit)
 
   const image_loc = req.body.image_loc
 
-  console.log(image_loc)
+  var editImageLoc = path.basename(image_loc);
+
+  var text = "/Gallery/Unit" + unit_number + "/" + editImageLoc;
+
+  fs.rename(image_loc, text);
+
+  console.log(text)
 
   var status = "fail"
 
-  client.query('INSERT INTO gallery_units(unit , image_loc) VALUES ($1 , $2)' , [unit_number , image_loc] , (err , result) => {
+  client.query('INSERT INTO gallery_units(unit , image_loc) VALUES ($1 , $2)' , [unit_number , text] , (err , result) => {
 
     if(err){
       throw err;
@@ -263,6 +268,185 @@ app.get("/student/view-meets", function(req, res) {
   
 });
 
+
+app.post("/overall-admin/add-student" , function(req,res) {
+
+  const un = parseInt(req.body.uname);
+  const gs = parseInt(req.body.gs);
+  const unit = parseInt(req.body.un);
+
+
+  var status = ""
+  var p = 0;
+  var p1 = 1;
+
+
+  client.query('SELECT * from login where id = $1' , [un], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      if(result.rowCount === 1){
+        status = "exists";
+        console.log("hey heree");
+
+      }
+      else{
+        status = "adding";
+
+          if(gs == 0){
+             p = 1;
+          }
+          else{
+            p = 2;
+
+            client.query('UPDATE login SET priority = $1 WHERE unit = $2 and priority = $3' , [p1 , unit , p] , (err , result) =>{
+              if(err){
+                throw err;
+              }
+              else{
+                status = "removedGSSuccess";
+
+                  client.query('INSERT INTO login(unit , id , password , priority) VALUES ($1 , $2 , $3 , $4)' , [unit , un , un , p], (err, result) => {
+
+                    if(err){
+                      throw err;
+                    }
+                    else{
+                      status = "updatesGSSuccess";
+
+                      res.send({sending_status : status})
+
+                    }
+
+                  })
+
+
+              }
+            })
+
+          }
+
+      }
+
+
+    }
+
+  })
+
+
+})
+
+
+
+app.post("/overall-admin/remove-student" , function(req,res) {
+
+  const un = parseInt(req.body.uname);
+  const unit = parseInt(req.body.unit);
+  const newGS = parseInt(req.body.newgs);
+
+  var priGS = 2;
+
+  var status = "";
+
+  client.query('SELECT * FROM login WHERE id = $1' , [un] , (err , result) => {
+    if(err){
+      throw err;
+    }
+    else{
+
+      if(result.rowCount === 1){
+
+        status = "exists";
+
+        client.query('DELETE FROM login WHERE id = $1' , [un] , (err , result) => {
+          if(err){
+            throw err;
+          }
+          else{
+            status = "removed";
+
+            if(newGS != 0){
+                  client.query('SELECT * FROM login WHERE id = $1' , [newGS], (err, result) => {
+
+                    if(err){
+                      throw err;
+                    }
+                    else{
+                      
+                      if(result.rowCount === 1){
+
+                            client.query('UPDATE login SET priority = $1 WHERE id = $2' , [priGS , newGS] , (err , result) => {
+                              if(err){
+                                throw err;
+                              }
+                              else{
+                                status = "updatedNewGS";
+                                res.send({sending_status : status})
+                              }
+                            })
+
+                      }
+
+                      else{
+                        client.query('INSERT INTO login VALUES($1 , $2 , $3 , $4', [unit , newGS , newGS , priGS] , (err , result) => {
+                          if(err){
+                            throw err;
+                          }
+                          else{
+                            status = "addedNewGS";
+                            res.send({sending_status : status})
+
+                          }
+                        })
+                      }
+
+                    }
+
+                  })
+            }
+
+          }
+        })
+
+      }
+      else{
+        status = "doesn't exists";
+        res.send({sending_status : status})
+      }
+
+    }
+  })
+
+
+
+})
+
+
+app.post("/overall-admin/view-students" , function(req,res) {
+
+
+  const unit_number = parseInt(req.body.unit);
+
+
+  client.query('SELECT * from login where unit = $1' , [unit_number], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      res.send({sending_students : result})
+
+
+    }
+
+  })
+
+
+})
 
 
 
