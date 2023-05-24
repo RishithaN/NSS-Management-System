@@ -171,8 +171,6 @@ const getAllMeetDetails = async () => {
 
         alert(image)
 
-
-
         
         fetch('http://localhost:8000/admin/gallery-upload', {
             method: 'POST',
@@ -272,7 +270,6 @@ const getAllMeetDetails = async () => {
           <h2 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginLeft:100}}>View Gallery</h2>
           <br/>
 
-
           </header>
 
           {isMeet && (
@@ -308,7 +305,6 @@ const getAllMeetDetails = async () => {
                                   <textarea type="text" name="description" required id="description" onChange={handleDescription}/>
 
                                 </div>
-
 
                                 <div>
 
