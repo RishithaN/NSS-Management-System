@@ -56,15 +56,16 @@ app.post("/admin/meet-upload" , function(req , res)  {
   const title = req.body.mtitle
   const total = req.body.mtotal
   const description = req.body.mdescription
+  const year = req.body.myear
 
-
-
+  const list = req.body.attendance
 
   console.log(type , title , total , description)
 
   var status = "fail"
+  var dupId = 0;
 
-  client.query('INSERT INTO meet(unit , mtype , mtitle , mtotal , mdescription) VALUES ($1 , $2 , $3 , $4 , $5)' , [unit_number , type , title , total , description] , (err , result) => {
+  client.query('INSERT INTO meet(unit , mtype , mtitle , mtotal , mdescription , myear) VALUES ($1 , $2 , $3 , $4 , $5 , $6)' , [unit_number , type , title , total , description , year] , (err , result) => {
 
     if(err){
       throw err;
@@ -72,6 +73,41 @@ app.post("/admin/meet-upload" , function(req , res)  {
     else{
       if(result.rowCount === 1){
         status = "success";
+
+        var keys = Object.keys(list);
+
+        for (var i = 0; i < keys.length; i++) {
+      
+            dupId = parseInt(list[keys[i]])
+
+          if(type === "Classroom"){
+            console.log(dupId)
+            client.query('UPDATE attendance SET classroom_no = classroom_no + 1 WHERE id = $1' , [dupId] , (err , result) => {
+              if(err){
+                throw err;
+              }
+              else{
+                status = "success2";
+              }
+            })
+          }
+
+          else{
+
+              client.query('UPDATE attendance SET manual_no = manual_no + 1 WHERE id = $1' , [dupId] , (err , result) => {
+                if(err){
+                  throw err;
+                }
+                else{
+                  status = "success3";
+                }
+              })
+
+          }
+
+        }
+
+
         console.log("i am here");
       }
 
@@ -197,6 +233,7 @@ app.post("/login", function(req, res) {
 
             if(result.rowCount === 1){
                 status = "success";
+
                 console.log("hey heree");
                 
                   var row = result.rows[0];
@@ -317,6 +354,15 @@ app.post("/overall-admin/add-student" , function(req,res) {
                     else{
                       status = "updatesGSSuccess";
 
+                      client.query('INSERT INTO attendance VALUES($1 , $2 , $3 , $4)' , [unit , id , 0 , 0] , (err , result) => {
+                        if(err){
+                          throw error;
+                        }
+                        else{
+                          status = "addedsuccess";
+                        }
+                      })
+
                       res.send({sending_status : status})
 
                     }
@@ -361,55 +407,67 @@ app.post("/overall-admin/remove-student" , function(req,res) {
 
         status = "exists";
 
-        client.query('DELETE FROM login WHERE id = $1' , [un] , (err , result) => {
+        client.query('DELETE FROM attendance WHERE id = $1' , [un] , (err , result) => {
+
           if(err){
             throw err;
           }
           else{
-            status = "removed";
-
-            if(newGS != 0){
-                  client.query('SELECT * FROM login WHERE id = $1' , [newGS], (err, result) => {
-
-                    if(err){
-                      throw err;
-                    }
-                    else{
-                      
-                      if(result.rowCount === 1){
-
-                            client.query('UPDATE login SET priority = $1 WHERE id = $2' , [priGS , newGS] , (err , result) => {
+            client.query('DELETE FROM login WHERE id = $1' , [un] , (err , result) => {
+              if(err){
+                throw err;
+              }
+              else{
+                status = "removed";
+    
+    
+                if(newGS != 0){
+                      client.query('SELECT * FROM login WHERE id = $1' , [newGS], (err, result) => {
+    
+                        if(err){
+                          throw err;
+                        }
+                        else{
+                          
+                          if(result.rowCount === 1){
+    
+                                client.query('UPDATE login SET priority = $1 WHERE id = $2' , [priGS , newGS] , (err , result) => {
+                                  if(err){
+                                    throw err;
+                                  }
+                                  else{
+                                    status = "updatedNewGS";
+                                    res.send({sending_status : status})
+                                  }
+                                })
+    
+                          }
+    
+                          else{
+                            client.query('INSERT INTO login VALUES($1 , $2 , $3 , $4', [unit , newGS , newGS , priGS] , (err , result) => {
                               if(err){
                                 throw err;
                               }
                               else{
-                                status = "updatedNewGS";
+                                status = "addedNewGS";
                                 res.send({sending_status : status})
+    
                               }
                             })
-
-                      }
-
-                      else{
-                        client.query('INSERT INTO login VALUES($1 , $2 , $3 , $4', [unit , newGS , newGS , priGS] , (err , result) => {
-                          if(err){
-                            throw err;
                           }
-                          else{
-                            status = "addedNewGS";
-                            res.send({sending_status : status})
-
-                          }
-                        })
-                      }
-
-                    }
-
-                  })
-            }
+    
+                        }
+    
+                      })
+                }
+    
+              }
+            })
 
           }
+              
         })
+
 
       }
       else{
@@ -422,8 +480,7 @@ app.post("/overall-admin/remove-student" , function(req,res) {
 
 
 
-})
-
+});
 
 app.post("/overall-admin/view-students" , function(req,res) {
 
@@ -446,9 +503,97 @@ app.post("/overall-admin/view-students" , function(req,res) {
   })
 
 
-})
+});
+
+app.post("/overall-admin/view-students-attendance" , function(req,res) {
 
 
+  const unit_number = session.unit;
+  const year = req.body.myear;
+
+
+  client.query('SELECT * from login where unit = $1 and CAST(id AS TEXT) like $2' , [unit_number , year + '%'], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      res.send({sending_students : result})
+
+
+    }
+
+  })
+
+
+});
+
+
+app.get("/student/view-attendance" , function(req,res) {
+
+
+  const id = session.userid;
+  const unit = session.unit;
+
+  const strId = id.toString();
+
+  var manuals = 0;
+  var classroom = 0;
+
+  var totalA = 0;
+  var total = 0;
+  var totalM = 0;
+  var totalC = 0;
+
+  var totalP = 0;
+
+  client.query('SELECT * from attendance where id = $1' , [id], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      rows = result.rows[0];
+
+      manuals = rows.manual_no;
+      classroom = rows.classroom_no;
+
+      totalA = parseInt(manuals) + parseInt(classroom);
+
+      client.query('SELECT COUNT (*) FROM meet GROUP BY mtype , unit , myear having unit = $1 and CAST(myear as TEXT) like $2' , [unit , strId.slice(0 , 4) + '%'] , (err ,  result) => {
+        if(err){
+          throw err;
+        }
+        else{
+
+          console.log("hell");
+          console.log(result);
+
+          var row1 = result.rows[0];
+          var row2 = result.rows[1];
+
+          totalM = row1.count;
+          totalC = row2.count;
+
+          total = parseInt(totalM) + parseInt(totalC);
+
+
+          totalP = ( parseInt(totalA) / parseInt(total) )*100;
+
+          res.send({totalMeets : total , totalManuals : totalM , totalClass : totalC , totalAttendance : totalA , totalManualAttendance : manuals , totalClassroomAttendance : classroom , totalPercentage : totalP})
+
+        }
+      })
+
+
+    }
+
+  })
+
+
+});
 
   app.get("/", (req, res) => {
     res.send("Hello World!");
