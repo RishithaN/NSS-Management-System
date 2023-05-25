@@ -7,9 +7,18 @@ const Student = () => {
 
     const [isMeet, setIsMeet] = useState(false);
     const [isGallery, setIsGallery] = useState(false);
+    const [isAttendance , setIsAttendance] = useState(false);
     
     const [meetArray , updateMeetArray] = useState([]);
     const [images , getImagesLocations] = useState([]);
+
+    const [totalMeets ,setTM] = useState();
+    const [totalManuals , setTMa] = useState();
+    const [totalClass , setTC] = useState();
+    const [totalAttendance , setTA] = useState();
+    const [totalManualsAttendance , setTMA] = useState();
+    const [totalClassroomAttendance , setTCA] = useState();
+    const [totalPercentage , setTP] = useState();
 
 
     const getGalleryImages = async () => {
@@ -31,6 +40,33 @@ const Student = () => {
           //var rows = data.sending_rows.rowCount
 
           getImagesLocations(data.sending_images.rows)
+
+
+        })
+
+    }
+
+
+    const getAttendanceValues = async () => {
+
+        fetch('http://localhost:8000/student/view-attendance', {
+            method: 'GET',
+            // redirect: 'manual',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => res.json())
+        .then((data) => {
+        
+            setTM(data.totalMeets);
+            setTMa(data.totalManuals);
+            setTC(data.totalClass);
+            setTA(data.totalAttendance);
+            setTMA(data.totalManualsAttendance);
+            setTCA(data.totalClassroomAttendance);
+            setTP(data.totalPercentage);
+          
 
 
         })
@@ -70,7 +106,7 @@ const Student = () => {
 
         setIsMeet(true)
         setIsGallery(false)
-
+        setIsAttendance(false)
 
         getAllMeetDetails();
         
@@ -81,9 +117,20 @@ const Student = () => {
 
         setIsMeet(false)
         setIsGallery(true)
-
+        setIsAttendance(false)
         getGalleryImages();
         
+    }
+
+
+    const handleAttendanceViewForStudent = event => {
+
+        setIsMeet(false)
+        setIsGallery(false)
+        setIsAttendance(true)
+
+        getAttendanceValues();
+
     }
 
 
@@ -132,6 +179,7 @@ const Student = () => {
 <header>
                 <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:250}}>View meet details</h2>
                 <h2 onClick={handleGalleryViewForStudent}style={{textAlign:"right", marginRight:250}}>View gallery</h2>
+                <h2 onClick={handleAttendanceViewForStudent}style={{textAlign:"right", marginRight:250}}>View Attendance</h2>
 </header>
 
 
@@ -176,6 +224,67 @@ const Student = () => {
                             // <h1>{image.image_loc}</h1>
                             ))}
                         </div></div></div>
+
+                )}
+
+                {isAttendance && (
+
+                    <div>
+                        <div>
+                            <p>Total Meets Conducted : </p>
+                            {totalMeets}
+                            
+                        </div>
+
+                        <div>
+                            <p>
+                                Total Manuals Conducted : 
+                            </p>
+                            {totalManuals}
+                        </div>
+
+                        <div>
+                            <p>
+                                Total Classroom meets Conducted : 
+                            </p>
+                            {totalClass}
+                        </div>
+
+                        <div>
+                            <p>
+                                Total Attendance : 
+                            </p>
+                            {totalAttendance}
+
+                        </div>
+
+                        <div>
+                            <p>
+                                Total Manuals Attendance : 
+                            </p>
+                            {totalManualsAttendance}
+
+                        </div>
+
+                        <div>
+                            <p>
+                                Total Classroom meets Attendance : 
+                            </p>
+                            {totalClassroomAttendance}
+
+                        </div>
+
+                        <div>
+                            <p>
+                                Attendance Percentage : 
+                            </p>
+                            {totalPercentage}
+
+                        </div>
+
+
+
+                    </div>
 
                 )}
 
