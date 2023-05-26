@@ -14,6 +14,8 @@ const OverallAdmin = () => {
     const [isAddStudent , setIsAddStudent] = useState(false);
     const [isRemoveStudent , setIsRemoveStudent] = useState(false);
     const [isViewStudents , setIsViewStudents] = useState(false);
+
+    const [isMeetStatistics , setIsMeetStatistics] = useState(false);
     
     const [meetArray , updateMeetArray] = useState([]);
     const [images , getImagesLocations] = useState([]);
@@ -30,6 +32,10 @@ const OverallAdmin = () => {
 
     const [newGS , setNewGS] = useState('0');
 
+    const [manuals , setManualCount] = useState();
+    const [classroom , setClassroomCount] = useState();
+    const [ratio , setRatio] = useState();
+
 
   const handleChangeUsername = event => {
     setUsername(event.target.value);
@@ -39,10 +45,25 @@ const OverallAdmin = () => {
     const handleUnitNumberChange = event => {
 
         setUnitNumber(event.target.value)
+
+        if(event.target.value === -1){
+
+            setIsMeet(false)
+            setIsGallery(false)
+            setIsAddStudent(false)
+            setIsRemoveStudent(false)
+            setIsViewStudents(false)
+            setIsMeetStatistics(false)
+            setIsNewGSShow(false);
+    
+
+        }
+
         setShowOptions(true)
         setIsNewGSShow(false);
         setIsGallery(false)
         setIsMeet(false)
+        setIsMeetStatistics(false)
         setIsViewStudents(false)
 
 
@@ -60,12 +81,12 @@ const OverallAdmin = () => {
 
         setNewGSValue(event.target.value);
 
-        alert(event.target.value);
+        // alert(event.target.value);
 
-        if(event.target.value == '0'){
+        if(event.target.value === '0'){
             setIsNewGSShow(false);
         }
-        else if(event.target.value == '1'){
+        else if(event.target.value === '1'){
             setIsNewGSShow(true);
         }
 
@@ -75,6 +96,33 @@ const OverallAdmin = () => {
     const handleChangeNewGSUsername = event => {
 
         setNewGS(event.target.value)
+
+    }
+
+
+    const getMeetStatistics = async () => {
+
+
+        fetch('http://localhost:8000/overall-admin/get-statistics', {
+            method: 'POST',
+            // redirect: 'manual',
+            body: JSON.stringify({unit : unit_number}),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => res.json())
+        .then((data) => {
+        
+
+          setManualCount(data.manuals)
+          setClassroomCount(data.classroom)
+          setRatio(data.ratio)
+
+
+        })
+
+
 
     }
 
@@ -162,11 +210,12 @@ const OverallAdmin = () => {
 
 
         setIsMeet(true)
-        setIsAddStudent(true)
+        setIsAddStudent(false)
         setIsGallery(false)
         setIsRemoveStudent(false)
         setIsViewStudents(false)
         setIsNewGSShow(false);
+        setIsMeetStatistics(false)
         getAllMeetDetails();
         
         
@@ -181,29 +230,58 @@ const OverallAdmin = () => {
         setIsRemoveStudent(false)
         setIsViewStudents(false)
         setIsNewGSShow(false);
+        setIsMeetStatistics(false)
         getGalleryImages();
         
     }
 
     const handleAddStudent = event => {
 
-        setIsMeet(false)
-        setIsGallery(false)
-        setIsAddStudent(true)
-        setIsRemoveStudent(false)
-        setIsViewStudents(false)
-        setIsNewGSShow(false);
+        if(unit_number === -1){
+
+            setIsMeet(false)
+            setIsGallery(false)
+            setIsAddStudent(false)
+            setIsRemoveStudent(false)
+            setIsViewStudents(false)
+            setIsMeetStatistics(false)
+            setIsNewGSShow(false);
+
+        }
+        else{
+            setIsMeet(false)
+            setIsGallery(false)
+            setIsAddStudent(true)
+            setIsRemoveStudent(false)
+            setIsViewStudents(false)
+            setIsMeetStatistics(false)
+            setIsNewGSShow(false);
+        }
         
     }
 
     const handleRemoveStudent = event => {
 
-        setIsMeet(false)
-        setIsGallery(false)
-        setIsAddStudent(false)
-        setIsRemoveStudent(true)
-        setIsNewGSShow(false);
-        setIsViewStudents(false)
+        if(unit_number === -1){
+
+            setIsMeet(false)
+            setIsGallery(false)
+            setIsAddStudent(false)
+            setIsRemoveStudent(false)
+            setIsViewStudents(false)
+            setIsMeetStatistics(false)
+            setIsNewGSShow(false);
+
+        }
+        else{
+            setIsMeet(false)
+            setIsGallery(false)
+            setIsAddStudent(false)
+            setIsRemoveStudent(true)
+            setIsNewGSShow(false);
+            setIsMeetStatistics(false)
+            setIsViewStudents(false)
+        }
         
     }
 
@@ -214,10 +292,25 @@ const OverallAdmin = () => {
         setIsGallery(false)
         setIsAddStudent(false)
         setIsRemoveStudent(false)
+        setIsMeetStatistics(false)
         setIsNewGSShow(false);
 
         getStudents();
         
+    }
+
+    const handleMeetStatsitics = event => {
+
+        setIsViewStudents(false)
+        setIsMeet(false)
+        setIsGallery(false)
+        setIsAddStudent(false)
+        setIsRemoveStudent(false)
+        setIsMeetStatistics(true)
+        setIsNewGSShow(false)
+
+        getMeetStatistics();
+
     }
 
 
@@ -269,7 +362,16 @@ const OverallAdmin = () => {
         .then((res) => res.json())
         .then((data) => {
             console.log(data.sending_status);
-            alert(data.sending_status);
+            // alert(data.sending_status);
+
+            if(data.sending_status === "exists"){
+                alert("Student already exists")
+            }
+            else if(data.sending_status === "addedsuccess"){
+                alert("Student added and GS Info updated")
+            }
+
+            window.location.reload(true);
 
         })
 
@@ -291,7 +393,16 @@ const OverallAdmin = () => {
         .then((res) => res.json())
         .then((data) => {
             console.log(data.sending_status);
-            alert(data.sending_status);
+            // alert(data.sending_status);
+
+            if(data.sending_status === "addedNewGS" || data.sending_status === "updatedNewGS" || data.sending_status === "removed"){
+                alert("Student deleted Successfully and GS Info Updated")
+            }
+            else if(data.sending_status === "doesn't exists"){
+                alert("Student ID doesn't exist")
+            }
+
+            window.location.reload(true);
 
         })
 
@@ -311,7 +422,7 @@ const OverallAdmin = () => {
 
                     <select onChange={handleUnitNumberChange} className="select-box">
 
-                        <option value="0" default></option>
+                        <option value="-1" default></option>
 
                         <option value="1" className="select-box__option">Unit 1</option>
 
@@ -348,20 +459,25 @@ const OverallAdmin = () => {
 
                         <header>
 
-                <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:100}}>View meet details</h2>
-                <h2 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginRight:100}}>View gallery</h2>
-                <h2 onClick={handleAddStudent} style={{textAlign:"left", marginLeft:100}}>Add Student</h2>
+                <h3 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:40 , marginRight:10}}>View meet details</h3>
+                <h3 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginLeft:40}}>View gallery</h3>
+                <h3 onClick={handleAddStudent} style={{textAlign:"left", marginLeft:80}}>Add Student</h3>
                 <br/>
-                <h2 onClick={handleRemoveStudent} style={{textAlign:"left", marginLeft:100}}>Remove Student</h2>
+                <h3 onClick={handleRemoveStudent} style={{textAlign:"left", marginLeft:90}}>Remove Student</h3>
                 <br/>
-                <h2 onClick={handleViewStudents} style={{textAlign:"left", marginLeft:100}}>View Students</h2>
+                <h3 onClick={handleViewStudents} style={{textAlign:"left", marginLeft:100}}>View Students</h3>
                 <br/>
+                <h3 onClick={handleMeetStatsitics} style={{textAlign:"left", marginLeft:90 , marginRight:20}}>Meet Statistics</h3>
+                <br />
                 </header>
 
 
 
                 {isMeet && (
                     <div>
+
+                        <br></br>
+                        <br></br>
 
                             {
                                     meetArray.map((row) =>
@@ -380,6 +496,8 @@ const OverallAdmin = () => {
 
                             }
 
+                            <br></br>
+
 
                         </div>
                     )}
@@ -387,6 +505,8 @@ const OverallAdmin = () => {
                     {isGallery && (
                         
                         <div className="gallery">
+                            <br></br>
+                            <br></br>
                                 {images.map(image => (
 
                                 <img style={{padding: 5, display: 'inline-block'}}
@@ -398,6 +518,7 @@ const OverallAdmin = () => {
                                 />
                                 // <h1>{image.image_loc}</h1>
                                 ))}
+                                <br></br>
                             </div>
 
                     )}
@@ -405,6 +526,8 @@ const OverallAdmin = () => {
 
                     {isAddStudent && (
                         <div>
+
+                            
 
                             {
                                     <form onSubmit={handleAddSubmit} style={{border: "3px solid black", marginLeft:300, marginTop:100, marginRight:300}}>
@@ -417,7 +540,7 @@ const OverallAdmin = () => {
                                     </div><br/>
                                     <div>
 
-
+                                            <p>Is the student the General Secretary ?</p>
                                             <select onChange={handleGSChange} className="select-box">
 
                                                     <option value="0" default>No</option>
@@ -438,12 +561,16 @@ const OverallAdmin = () => {
 
                             }
 
+                            <br></br>
+                            <br></br>
 
                         </div>
+
                     )}  
 
                     {isRemoveStudent && (
                         <div>
+
 
                             {
                                     <form onSubmit={handleRemoveSubmit} style={{border: "3px solid black", marginLeft:300, marginTop:100, marginRight:300}}>
@@ -456,7 +583,7 @@ const OverallAdmin = () => {
                                     </div><br/>
                                     <div>
 
-
+                                            <p>Is the student the General Secretary ?</p>
                                             <select onChange={handleNewGSChange} className="select-box">
 
                                                     <option value="0" className="select-box__option" default>No</option>
@@ -471,12 +598,15 @@ const OverallAdmin = () => {
                                     {isNewGSShow && (
                                         <div>
 
-                                            <label>New General Secretary :</label>
+                                            <label>Enter ID of New General Secretary :</label>
+                                            <br></br>
                                             <input type="number" name="unameNewGS" required id="unameNewGS" onChange={handleChangeNewGSUsername} style={{margin: 5}}/>
                                             <br></br>
                                         
                                         </div>
                                     )}
+
+                                    <br></br>
                             
                                     <div>
                                       <input type="submit" style={{width:150}}/>
@@ -488,6 +618,9 @@ const OverallAdmin = () => {
 
                             }
 
+                            <br></br>
+                            <br></br>
+
 
                         </div>
                     )}  
@@ -495,6 +628,9 @@ const OverallAdmin = () => {
 
                     {isViewStudents && (
                         <div>
+
+                            <br></br>
+                            <br></br>
 
                             {
                                     studentsArray.map((row) =>
@@ -509,6 +645,29 @@ const OverallAdmin = () => {
                                     )
 
                             }
+
+
+                        </div>
+                    )}
+
+
+                        {isMeetStatistics && (
+                        <div>
+
+                            <div>
+                                <p><b>Total Manuals Conducted so far =</b> </p>
+                                {manuals}
+                            </div>
+
+                            <div>
+                                <p><b>Total Classroom meets Conducted so far = </b></p>
+                                {classroom}
+                            </div>
+
+                            <div>
+                                <p><b>Total Ratio = </b></p>
+                                {ratio}
+                            </div>
 
 
                         </div>

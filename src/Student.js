@@ -177,9 +177,9 @@ const Student = () => {
   
                 <h1 style={{marginTop:30}}>Welcome to Student page</h1><br/><br/>
 <header>
-                <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:250}}>View meet details</h2>
-                <h2 onClick={handleGalleryViewForStudent}style={{textAlign:"right", marginRight:250}}>View gallery</h2>
-                <h2 onClick={handleAttendanceViewForStudent}style={{textAlign:"right", marginRight:250}}>View Attendance</h2>
+                <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:100 , marginRight:100}}>View meet details</h2>
+                <h2 onClick={handleGalleryViewForStudent}style={{textAlign:"right", marginRight:100}}>View gallery</h2>
+                <h2 onClick={handleAttendanceViewForStudent}style={{textAlign:"right", marginRight:100}}>View Attendance</h2>
 </header>
 
 
@@ -229,65 +229,68 @@ const Student = () => {
 
                 {isAttendance && (
 
+                <div  style={{fontSize:18, textAlign:'left'}}>
+                    <div><br/><br/>
+                        <p style={{marginLeft:400, }}><b>Total Meets Conducted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;:</b>&emsp;&emsp;&emsp;{totalMeets}
+                        </p> 
+                        
+                        
+                    </div><br/>
+
                     <div>
-                        <div>
-                            <p>Total Meets Conducted : </p>
-                            {totalMeets}
-                            
-                        </div>
+                        <p style={{marginLeft: 400}}><b>
+                            Total Manuals Conducted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;&emsp;{totalManuals}
+                        </p>
+                    
+                    </div><br/>
 
-                        <div>
-                            <p>
-                                Total Manuals Conducted : 
-                            </p>
-                            {totalManuals}
-                        </div>
+                    <div>
+                        <p style={{marginLeft: 400}}><b>
+                            Total Classroom meets Conducted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;  :</b>&emsp;&emsp;&emsp; {totalClass}
+                        </p>
+                    
+                    </div><br/>
 
-                        <div>
-                            <p>
-                                Total Classroom meets Conducted : 
-                            </p>
-                            {totalClass}
-                        </div>
+                    <div>
+                        <p style={{marginLeft: 400}}><b>
+                            Total Attendance&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;&emsp;{totalAttendance}
+                        </p>
+                    
 
-                        <div>
-                            <p>
-                                Total Attendance : 
-                            </p>
-                            {totalAttendance}
+                    </div><br/>
 
-                        </div>
+                    <div>
+                        <p style={{marginLeft: 400}}><b>
+                            Total Manuals Attendance &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: &emsp;&emsp;&emsp;</b>{totalManualsAttendance}
+                        </p>
+                    
 
-                        <div>
-                            <p>
-                                Total Manuals Attendance : 
-                            </p>
-                            {totalManualsAttendance}
+                    </div><br/>
 
-                        </div>
+                    <div>
+                        <p style={{marginLeft: 400}}><b>
+                            Total Classroom meets Attendance&nbsp;&nbsp;&emsp;&emsp; : &emsp;&emsp;&emsp;</b>{totalClassroomAttendance}
+                        </p>
 
-                        <div>
-                            <p>
-                                Total Classroom meets Attendance : 
-                            </p>
-                            {totalClassroomAttendance}
 
-                        </div>
+                    </div><br/>
 
-                        <div>
-                            <p>
-                                Attendance Percentage : 
-                            </p>
-                            {totalPercentage}
+                    <div>
+                        <p style={{marginLeft: 400}}><b>
+                            Attendance Percentage &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;&emsp;{totalPercentage}
+                        </p>
+                        
 
-                        </div>
+                    </div><br/><br/><br/>
 
 
 
-                    </div>
 
-                )}
+                                </div>
 
+                    )}
+
+            
 
                 
 

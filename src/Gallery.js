@@ -18,6 +18,8 @@ const buildURL = imagePath =>
 
 export const Gallery = () => (
   <div className="gallery">
+    <br></br>
+    <br></br>
     {images.map(image => (
       <Imgix
         sizes="(min-width: 960px) 33vw, (min-width: 640px) 50vw, 100vw"
@@ -31,6 +33,8 @@ export const Gallery = () => (
         height="600"
       />
     ))}
+    <br></br>
+    <br></br>
   </div>
 );
 

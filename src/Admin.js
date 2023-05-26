@@ -12,6 +12,8 @@ const Admin = () => {
     const [isMeetView, setIsMeetView] = useState(false);
     const [isGalleryView, setIsGalleryView] = useState(false);
 
+    const [isMeetStatistics , setIsMeetStatistics] = useState(false);
+
 
     const [meetArray , updateMeetArray] = useState([]);
     const [images , getImagesLocations] = useState([]);
@@ -36,6 +38,11 @@ const Admin = () => {
     const [totalManualsAttendance , setTMA] = useState();
     const [totalClassroomAttendance , setTCA] = useState();
     const [totalPercentage , setTP] = useState();
+
+
+    const [manuals , setManualCount] = useState();
+    const [classroom , setClassroomCount] = useState();
+    const [ratio , setRatio] = useState();
 
 
     const handleType = event => {
@@ -116,9 +123,6 @@ const Admin = () => {
   const handleMeetSubmit = e => {
 
           e.preventDefault();
-
-          alert(meet_type);
-          
           
           fetch('http://localhost:8000/admin/meet-upload', {
               method: 'POST',
@@ -134,7 +138,8 @@ const Admin = () => {
             console.log(data.sending)
 
         if(data.sending === "success"){
-          alert("success")
+          alert("New Meet Details Successfull added")
+          window.location.reload(true);
         }
         else{
           alert("fail")
@@ -177,6 +182,33 @@ const Admin = () => {
 }
 
 
+const getMeetStatistics = async () => {
+
+
+  fetch('http://localhost:8000/admin/get-statistics', {
+      method: 'POST',
+      // redirect: 'manual',
+      // body: JSON.stringify({unit : unit_number}),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+  })
+  .then((res) => res.json())
+  .then((data) => {
+  
+
+    setManualCount(data.manuals)
+    setClassroomCount(data.classroom)
+    setRatio(data.ratio)
+
+
+  })
+
+
+
+}
+
+
 const getAllMeetDetails = async () => {
     
     fetch('http://localhost:8000/student/view-meets', {
@@ -213,9 +245,6 @@ const getAllMeetDetails = async () => {
 
         e.preventDefault();
 
-        alert(image)
-
-        
         fetch('http://localhost:8000/admin/gallery-upload', {
             method: 'POST',
             body: JSON.stringify({image_loc : image}),
@@ -230,7 +259,8 @@ const getAllMeetDetails = async () => {
           console.log(data.sending)
 
       if(data.sending === "success"){
-        alert("success")
+        alert("Image successfully Uploaded")
+        window.location.reload(true);
       }
       else{
         alert("fail")
@@ -251,6 +281,7 @@ const getAllMeetDetails = async () => {
       setIsMeetView(false)
       setIsGalleryView(false)
       setIsAttendance(false)
+      setIsMeetStatistics(false)
       getAllMeetDetails();
 
       setIsMeetView(true)
@@ -265,6 +296,7 @@ const getAllMeetDetails = async () => {
       setIsMeet(true)
       setIsGallery(false)
       setIsMeetView(false)
+      setIsMeetStatistics(false)
       setIsGalleryView(false)
       setIsAttendance(false)
 
@@ -278,6 +310,7 @@ const getAllMeetDetails = async () => {
     setIsGallery(false)
     setIsMeetView(false)
     setIsGalleryView(false)
+    setIsMeetStatistics(false)
     setIsAttendance(false)
     getGalleryImages();
 
@@ -294,6 +327,7 @@ const getAllMeetDetails = async () => {
     setIsGallery(true)
     setIsMeetView(false)
     setIsGalleryView(false)
+    setIsMeetStatistics(false)
     setIsAttendance(false)
 
     
@@ -306,8 +340,22 @@ const handleAttendanceViewForStudent = async () => {
     setIsMeetView(false)
     setIsGalleryView(false)
     setIsAttendance(true)
+    setIsMeetStatistics(false)
 
     getAttendanceValues();
+
+}
+
+const handleStatistics = event => {
+
+  setIsGallery(false)
+  setIsMeetView(false)
+  setIsGalleryView(false)
+  setIsAttendance(false)
+  setIsMeetStatistics(true)
+
+
+  getMeetStatistics();
 
 }
 
@@ -319,7 +367,7 @@ const addStudentAttendance = async (event) => {
 
 const handleGetStudents = async () => {
 
-  fetch('http://localhost:8000/overall-admin/view-students-attendance', {
+  fetch('http://localhost:8000/admin/view-students-attendance', {
     method: 'POST',
     // redirect: 'manual',
     body: JSON.stringify({myear : year}),
@@ -346,129 +394,131 @@ const handleGetStudents = async () => {
 
         <header className="studentNav">
 
-          <h2 onClick={handleMeetUploadForStudent} style={{textAlign:"left", marginLeft:20}}>Upload meet details</h2>
+          <h3 onClick={handleMeetUploadForStudent} style={{textAlign:"left", marginLeft:10}}>Upload meet details</h3>
           <br/>
-          <h2 onClick={handleGalleryUploadForStudent} style={{textAlign:"left", marginLeft:90}}>Upload gallery</h2>
+          <h3 onClick={handleGalleryUploadForStudent} style={{textAlign:"left", marginLeft:70}}>Upload gallery</h3>
           <br/>
-          <h2 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:90}}>View meets</h2>
+          <h3 onClick={handleMeetViewForStudent} style={{textAlign:"left", marginLeft:70}}>View meets</h3>
           <br/>
-          <h2 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginLeft:100}}>View Gallery</h2>
+          <h3 onClick={handleGalleryViewForStudent} style={{textAlign:"left", marginLeft:90}}>View Gallery</h3>
           <br/>
-          <h2 onClick={handleAttendanceViewForStudent} style={{textAlign:"left", marginLeft:100}}>View Attendance</h2>
+          <h3 onClick={handleAttendanceViewForStudent} style={{textAlign:"left", marginLeft:100}}>View Attendance</h3>
           <br/>
+          <h3 onClick={handleStatistics} style={{textAlign:"left", marginLeft:100}}>View Statistics</h3>
+          <br />
 
           </header>
 
-          {isMeet && (
-                    <div>
+            {isMeet && (
+                      <div style={{border: "3px solid black", marginLeft:300, marginTop:100, marginRight:300 , marginBottom:200}}>
+                            <br/><h2>Meet upload</h2>
 
-                          <form onSubmit = {handleMeetSubmit}>
-
+                            <form onSubmit = {handleMeetSubmit} style={{textAlign: 'left', paddingLeft:170}}>
+                                  <div>          
+                                  <div>
+                                  <br/><label>Meet Type:&emsp;&ensp; </label>
                                           
-                                <div>
-                                        <label>Meet Type</label>
-                                        <br></br>
-                                        <input type="radio" id="manual" name="meet_type" value="Manual" onChange={handleType} required/>
-                                                <label for="manual">Manual</label><br></br>
-                                                <input type="radio" id="classroom" name="meet_type" value="Classroom" onChange={handleType} required/>
-                                                <label for="classroom">Classroom</label><br></br>
+                                          <input type="radio" id="manual" name="meet_type" value="Manual" onChange={handleType} required style={{marginLeft: 5}}/>
+                                                  <label for="manual">Manual</label>
+                                                  <input type="radio" id="classroom" name="meet_type" value="Classroom" onChange={handleType} required/>
+                                                  <label for="classroom">Classroom</label><br></br>
 
-                                </div>
+                                  </div>
 
-                                <div>
-                                  <label>Title </label>
-                                  <input type="text" name="title" required id="title" onChange={handleTitle}/>
-                                </div>
+                                  <div>
+                                    <label>Title:&emsp;&emsp;&emsp;&emsp;&ensp; </label>
+                                    <input type="text" name="title" required id="title" onChange={handleTitle}  style={{margin: 5}}/>
+                                  </div>
 
 
-                                <div>
-                                    <label>Total students attended </label>
-                                    <input type="number" name="total" required id = "total" onChange={handleTotal} />
-                                </div>
+                                  <div>
+                                      <label>Total Strength: </label>
+                                      <input type="number" name="total" required id = "total" onChange={handleTotal}  style={{margin: 5}}/>
+                                  </div>
 
 
-                                <div>
-                                  <label>Description </label>
-                                  <textarea type="text" name="description" required id="description" onChange={handleDescription}/>
+                                  <div>
+                                    <label>Description: &ensp;&nbsp;&nbsp;</label>
+                                    <textarea type="text" name="description" required id="description" onChange={handleDescription}  style={{margin: 5}}/>
 
-                                </div>
-
-
-                                <div>
-                                  <label>Year </label>
-                                  <input type="number" name="year" required id="year" onChange={handleYear}/>
-                                  <br></br>
-                                  <p onClick={handleGetStudents}>Get Students</p>
-                                </div>
-
-                                <div>
-
-                                    {
-                                            studentsArray.map((row) =>
-                                            <ul style={{listStyleType: "none"}}>
-    
-
-                                                    <input type="checkbox" name="attendance_roll" value={row.id} onChange={addStudentAttendance}/>{row.id}<br></br>
-
-                                                    <br/>
-
-                                            </ul>
-
-                                                
-                                            )
-
-                                    }
+                                  </div>
 
 
-                                </div>
+                                  <div>
+                                    <label>Year:&emsp;&emsp;&emsp; &emsp;&nbsp;</label>
+                                    <input type="number" name="year" required id="year" onChange={handleYear}  style={{margin: 5}}/>
+                                    <br></br></div><br/>
+                                    <p onClick={handleGetStudents}>Get Students</p>
+                                  </div>
 
-                                <div>
+                                  <div>
 
-                                    <input type="submit"/>
+                                      {
+                                              studentsArray.map((row) =>
+                                              <ul style={{listStyleType: "none"}}>
+      
 
-                                </div>
+                                                      <input type="checkbox" name="attendance_roll" value={row.id} onChange={addStudentAttendance}/>{row.id}
+
+                                                      <br/>
+
+                                              </ul>
+
+                                                  
+                                              )
+
+                                      }
 
 
-                          </form>
+                                  </div>
 
+                                  <div>
 
+                                    <br/> <input type="submit" style = {{width:150, marginLeft:80}}/><br/><br/>
 
-                    </div>
-                )}
+                                  </div>
 
-                {isGallery && (
-
-                      <div>
-
-                          <h2>Gallery upload</h2>
-
-                          <br/>
-                          <br/>
-
-                          <div>
-
-                            <form onSubmit={handleGallerySubmit}>
-
-                                <input type="file" onChange={handleGalleryPic}/>
-
-                                <br></br>
-
-                                <br/>
-
-                                <br/>
-
-                                <input type="submit"/>
 
                             </form>
 
-                          </div>
 
-                    
+
                       </div>
-                    
-                    
 
-                )}
+            )}
+
+            {isGallery && (
+
+            <div style={{border: "3px solid black", marginLeft:400, marginTop:100, marginRight:400 , marginBottom : 100}}>
+            <br/><br/>
+                <h2>Gallery upload</h2>
+
+                <br/>
+                <br/>
+
+                <div>
+
+                  <form onSubmit={handleGallerySubmit}>
+
+                      <input type="file" onChange={handleGalleryPic}/>
+
+                      <br></br>
+
+                      <br/>
+
+                      <br/>
+
+                      <input type="submit"/><br/><br/><br/>
+
+                  </form>
+
+                </div>
+
+
+            </div>
+
+
+            )}
 
                 {isMeetView && (
                   <div>
@@ -518,64 +568,93 @@ const handleGetStudents = async () => {
 
                 {isAttendance && (
 
-                <div>
-                    <div>
-                        <p>Total Meets Conducted : </p>
-                        {totalMeets}
+                <div  style={{fontSize:18, textAlign:'left'}}>
+                    <div><br/><br/>
+                        <p style={{marginLeft:400, }}><b>Total Meets Conducted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;:</b>&emsp;&emsp;&emsp;{totalMeets}
+                        </p> 
                         
-                    </div>
+                        
+                    </div><br/>
 
                     <div>
-                        <p>
-                            Total Manuals Conducted : 
+                        <p style={{marginLeft: 400}}><b>
+                            Total Manuals Conducted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;&emsp;{totalManuals}
                         </p>
-                        {totalManuals}
-                    </div>
+                      
+                    </div><br/>
 
                     <div>
-                        <p>
-                            Total Classroom meets Conducted : 
+                        <p style={{marginLeft: 400}}><b>
+                            Total Classroom meets Conducted &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&emsp;  : </b>&emsp;&emsp;&emsp; {totalClass}
                         </p>
-                        {totalClass}
-                    </div>
+                      
+                    </div><br/>
 
                     <div>
-                        <p>
-                            Total Attendance : 
+                        <p style={{marginLeft: 400}}><b>
+                            Total Attendance&nbsp;&nbsp;&nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;&emsp;{totalAttendance}
                         </p>
-                        {totalAttendance}
+                      
 
-                    </div>
+                    </div><br/>
 
                     <div>
-                        <p>
-                            Total Manuals Attendance : 
+                        <p style={{marginLeft: 400}}><b>
+                            Total Manuals Attendance &nbsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: &emsp;&emsp;&emsp;</b>{totalManualsAttendance}
                         </p>
-                        {totalManualsAttendance}
+                      
 
-                    </div>
+                    </div><br/>
 
                     <div>
-                        <p>
-                            Total Classroom meets Attendance : 
+                        <p style={{marginLeft: 400}}><b>
+                            Total Classroom meets Attendance&nbsp;&nbsp;&emsp;&emsp; : &emsp;&emsp;&emsp;</b>{totalClassroomAttendance}
                         </p>
-                        {totalClassroomAttendance}
 
-                    </div>
+
+                    </div><br/>
 
                     <div>
-                        <p>
-                            Attendance Percentage : 
+                        <p style={{marginLeft: 400}}><b>
+                            Attendance Percentage &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;&emsp;{totalPercentage}
                         </p>
-                        {totalPercentage}
+                        
 
-                    </div>
+                    </div><br/><br/><br/>
 
 
 
-                </div>
+
+                  </div>
 
                 )}
+
+                     
+
+
+                {isMeetStatistics && (
+                        <div>
+
+                            <div>
+                                <p><b>Total Manuals Conducted so far =</b> </p>
+                                {manuals}
+                            </div>
+
+                            <div>
+                                <p><b>Total Classroom meets Conducted so far = </b></p>
+                                {classroom}
+                            </div>
+
+                            <div>
+                                <p><b>Total Ratio = </b></p>
+                                {ratio}
+                            </div>
+
+
+                        </div>
+                    )}
+
+
 
       </div>
         
