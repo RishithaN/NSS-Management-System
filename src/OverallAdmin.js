@@ -627,17 +627,16 @@ const OverallAdmin = () => {
 
 
                     {isViewStudents && (
-                        <div>
-
+                        <div><br/>
+                            <h3>List of Students</h3>
                             <br></br>
                             <br></br>
 
                             {
                                     studentsArray.map((row) =>
                                     <ul style={{listStyleType: "none"}}>
-                                            <li><b>{row.id}</b></li>
+                                            <li>{row.id}</li>
 
-                                            <br/>
 
                                     </ul>
 
@@ -645,30 +644,33 @@ const OverallAdmin = () => {
                                     )
 
                             }
-
+                        <br/><br/><br/>
 
                         </div>
                     )}
 
 
-                        {isMeetStatistics && (
-                        <div>
+{isMeetStatistics && (
+                        <div style={{textAlign: 'left', marginLeft:350}}>
 
                             <div>
-                                <p><b>Total Manuals Conducted so far =</b> </p>
-                                {manuals}
+                              <br/><br/><br/>
+                                <p><b>Total Manuals Conducted so far&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;:&emsp;&emsp; </b> {manuals}</p>
+                              
                             </div>
 
                             <div>
-                                <p><b>Total Classroom meets Conducted so far = </b></p>
-                                {classroom}
+                                <p><b>Total Classroom meets Conducted so far&emsp;&emsp;:&emsp;&emsp; </b>{classroom}</p>
+                                
                             </div>
 
                             <div>
-                                <p><b>Total Ratio = </b></p>
-                                {ratio}
+                                <p><b>Total Ratio&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;: </b>&emsp;&emsp;{ratio}</p>
+                                
                             </div>
 
+                                <br></br>
+                                <br></br>
 
                         </div>
                     )}
