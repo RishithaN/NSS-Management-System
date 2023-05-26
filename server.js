@@ -123,21 +123,31 @@ app.post("/admin/meet-upload" , function(req , res)  {
 
 
 
-app.post("/admin/gallery-upload" , function(req , res)  {
+app.post("/admin/gallery-upload" , async(req , res) => {
 
   const unit_number = session.unit
+  
 
   console.log(session.unit)
 
-  const image_loc = req.body.image_loc
+  var image_loc = req.body.image_loc
 
   var editImageLoc = path.basename(image_loc);
 
   var text = "/Gallery/Unit" + unit_number + "/" + editImageLoc;
 
-  fs.rename(image_loc, text);
+  image_loc = "C:/Users/nrish/Downloads/" + editImageLoc;
 
-  console.log(text)
+  console.log(image_loc);
+
+  dest = "C:/Users/nrish/Rishi/Projects/SRP/nss/public/Gallery/Unit" + unit_number + "/" + editImageLoc;
+
+  fs.copyFile(image_loc, dest , function (err) {
+    if (err) throw err
+    console.log('Successfully renamed - AKA moved!')
+  })
+
+  
 
   var status = "fail"
 
@@ -328,6 +338,7 @@ app.post("/overall-admin/add-student" , function(req,res) {
       if(result.rowCount === 1){
         status = "exists";
         console.log("hey heree");
+        res.send({sending_status : status})
 
       }
       else{
@@ -354,16 +365,15 @@ app.post("/overall-admin/add-student" , function(req,res) {
                     else{
                       status = "updatesGSSuccess";
 
-                      client.query('INSERT INTO attendance VALUES($1 , $2 , $3 , $4)' , [unit , id , 0 , 0] , (err , result) => {
+                      client.query('INSERT INTO attendance VALUES($1 , $2 , $3 , $4)' , [unit , un , 0 , 0] , (err , result) => {
                         if(err){
-                          throw error;
+                          throw err;
                         }
                         else{
                           status = "addedsuccess";
+                          res.send({sending_status : status})
                         }
                       })
-
-                      res.send({sending_status : status})
 
                     }
 
@@ -418,8 +428,6 @@ app.post("/overall-admin/remove-student" , function(req,res) {
                 throw err;
               }
               else{
-                status = "removed";
-    
     
                 if(newGS != 0){
                       client.query('SELECT * FROM login WHERE id = $1' , [newGS], (err, result) => {
@@ -459,6 +467,10 @@ app.post("/overall-admin/remove-student" , function(req,res) {
                         }
     
                       })
+                }
+                else{
+                  status = "removed";
+                  res.send({sending_status : status})
                 }
     
               }
@@ -505,7 +517,7 @@ app.post("/overall-admin/view-students" , function(req,res) {
 
 });
 
-app.post("/overall-admin/view-students-attendance" , function(req,res) {
+app.post("/admin/view-students-attendance" , function(req,res) {
 
 
   const unit_number = session.unit;
@@ -521,6 +533,98 @@ app.post("/overall-admin/view-students-attendance" , function(req,res) {
 
       res.send({sending_students : result})
 
+
+    }
+
+  })
+
+
+});
+
+
+app.post("/overall-admin/get-statistics" , function(req,res) {
+
+
+  const unit_number = req.body.unit;
+
+  var man = 0;
+  var cls = 0;
+  var tot = 0;
+
+  var send1 = 0;
+  var send2 = 0;
+  var send3 = 0;
+
+
+  client.query('SELECT COUNT(*) from meet GROUP BY mtype , unit HAVING unit = $1' , [unit_number], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      if(result.rowCount == 2){
+
+        var row1 = result.rows[0];
+        var row2 = result.rows[1];
+
+        
+        man = parseInt(row2.count);
+        cls = parseInt(row1.count);
+
+        tot = man  + cls
+
+        send1 = (man);
+        send2 = (cls);
+
+        send3 = (man/cls)*100;
+
+      }
+
+      res.send({manuals : man , classroom : cls , ratio : send3})
+
+    }
+
+  })
+
+
+});
+
+
+app.post("/admin/get-statistics" , function(req,res) {
+
+
+  const unit_number = parseInt(session.unit);
+
+  var man = 0;
+  var cls = 0;
+  var tot = 0;
+
+  var send1 = 0;
+  var send2 = 0;
+  var send3 = 0;
+
+
+  client.query('SELECT COUNT(*) from meet GROUP BY mtype , unit HAVING unit = $1' , [unit_number], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      var row1 = result.rows[0];
+      var row2 = result.rows[1];
+
+      
+      man = parseInt(row2.count);
+      cls = parseInt(row1.count);
+
+      tot = man  + cls
+
+
+      send3 = (man/cls)*100;
+
+      res.send({manuals : man , classroom : cls , ratio : send3})
 
     }
 
@@ -558,6 +662,7 @@ app.get("/student/view-attendance" , function(req,res) {
       rows = result.rows[0];
 
       manuals = rows.manual_no;
+      console.log("heyy " + manuals)
       classroom = rows.classroom_no;
 
       totalA = parseInt(manuals) + parseInt(classroom);
@@ -571,21 +676,49 @@ app.get("/student/view-attendance" , function(req,res) {
           console.log("hell");
           console.log(result);
 
-          var row1 = result.rows[0];
-          var row2 = result.rows[1];
+          if(result.rowCount == 2){
 
-          totalM = row1.count;
-          totalC = row2.count;
+            var row1 = result.rows[0];
+            var row2 = result.rows[1];
 
-          total = parseInt(totalM) + parseInt(totalC);
+            totalC = parseInt(row1.count);
+            totalM = parseInt(row2.count);
+
+            total = totalM + totalC;
 
 
-          totalP = ( parseInt(totalA) / parseInt(total) )*100;
+            totalP = ( parseInt(totalA) / parseInt(total) )*100;
+          }
 
-          res.send({totalMeets : total , totalManuals : totalM , totalClass : totalC , totalAttendance : totalA , totalManualAttendance : manuals , totalClassroomAttendance : classroom , totalPercentage : totalP})
+          res.send({totalMeets : total , totalManuals : totalM , totalClass : totalC , totalAttendance : totalA , totalManualsAttendance : manuals , totalClassroomAttendance : classroom , totalPercentage : totalP})
 
         }
       })
+
+
+    }
+
+  })
+
+
+});
+
+app.post("/user/query-upload" , function(req,res) {
+
+
+  const name = req.body.qname;
+  const message = req.body.qmessage;
+  const email = req.body.qemail;
+
+
+  client.query('INSERT INTO queries (name , email , message) VALUES($1 , $2 , $3)' , [name , email , message], (err, result) => {
+      
+    if(err){
+        throw err;
+    }
+    else{
+
+      res.send({sending : "success"})
 
 
     }
